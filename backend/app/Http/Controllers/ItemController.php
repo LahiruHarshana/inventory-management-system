@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -35,9 +36,7 @@ class ItemController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image_path'] = $request->file('image')
-                ->storeOnCloudinary('inventory')
-                ->getSecurePath();
+            $validated['image_path'] = $this->uploadImageToCloudinary($request->file('image'));
         }
 
         $validated['available_quantity'] = $validated['total_quantity'];
@@ -73,9 +72,7 @@ class ItemController extends Controller
         if ($request->hasFile('image')) {
             $this->deleteCloudinaryAssetFromUrl($item->image_path);
 
-            $validated['image_path'] = $request->file('image')
-                ->storeOnCloudinary('inventory')
-                ->getSecurePath();
+            $validated['image_path'] = $this->uploadImageToCloudinary($request->file('image'));
         }
 
         if (array_key_exists('total_quantity', $validated) && $item->available_quantity > $validated['total_quantity']) {
@@ -101,6 +98,18 @@ class ItemController extends Controller
         ]);
     }
 
+    private function uploadImageToCloudinary(UploadedFile $image): string
+    {
+        $result = Cloudinary::uploadApi()->upload($image->getRealPath(), [
+            'folder' => 'inventory',
+            'resource_type' => 'image',
+            'use_filename' => true,
+            'unique_filename' => true,
+        ]);
+
+        return $result['secure_url'];
+    }
+
     private function deleteCloudinaryAssetFromUrl(?string $url): void
     {
         if (!$url) {
@@ -114,7 +123,7 @@ class ItemController extends Controller
         }
 
         try {
-            Cloudinary::destroy($publicId);
+            Cloudinary::uploadApi()->destroy($publicId, ['resource_type' => 'image']);
         } catch (Throwable) {
             // Do not block API flow if Cloudinary deletion fails.
         }
