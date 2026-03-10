@@ -24,6 +24,8 @@ interface Item {
   name: string;
   code: string;
   total_quantity: number;
+  available_quantity?: number;
+  quantity?: number;
   image_path: string | null;
   status: ItemStatus;
   place_id: number;
@@ -241,7 +243,12 @@ export default function ItemsPage() {
                           {item.code}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-700 sm:px-8">
-                          {item.total_quantity}
+                          <span className="font-bold text-gray-900">
+                            {item.available_quantity ?? item.quantity ?? item.total_quantity}
+                          </span>{" "}
+                          <span className="text-sm text-gray-500">
+                            / {item.quantity ?? item.total_quantity}
+                          </span>
                         </td>
                         <td className="px-6 py-4 sm:px-8">
                           <span

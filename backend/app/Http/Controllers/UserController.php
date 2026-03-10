@@ -9,6 +9,15 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function index(): JsonResponse
+    {
+        $users = User::query()
+            ->latest('id')
+            ->paginate(15);
+
+        return response()->json($users);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([

@@ -24,6 +24,8 @@ interface Item {
   name: string;
   code: string;
   total_quantity: number;
+  available_quantity?: number;
+  quantity?: number;
   serial_number: string | null;
   description: string | null;
   image_path: string | null;
@@ -248,10 +250,10 @@ export default function ViewItemPage() {
 
                 <div className="rounded-3xl border border-gray-200 bg-gray-50 px-5 py-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
-                    Quantity On Hand
+                    Available Quantity
                   </p>
                   <p className="mt-2 text-3xl font-semibold tracking-tight text-gray-900">
-                    {item.total_quantity}
+                    {item.available_quantity ?? item.quantity ?? item.total_quantity}
                   </p>
                 </div>
               </div>
@@ -262,7 +264,14 @@ export default function ViewItemPage() {
                 <DetailField label="Serial Number" value={item.serial_number || "Not provided"} />
                 <DetailField label="Stored Place" value={placeLabel} />
                 <DetailField label="Status" value={item.status} />
-                <DetailField label="Quantity" value={String(item.total_quantity)} />
+                <DetailField
+                  label="Available Quantity"
+                  value={String(item.available_quantity ?? item.quantity ?? item.total_quantity)}
+                />
+                <DetailField
+                  label="Total Quantity"
+                  value={String(item.quantity ?? item.total_quantity)}
+                />
               </div>
 
               <div className="mt-8 rounded-3xl border border-gray-200 bg-gray-50/80 p-6">

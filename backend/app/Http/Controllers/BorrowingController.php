@@ -11,6 +11,16 @@ use Illuminate\Validation\Rule;
 
 class BorrowingController extends Controller
 {
+    public function index(): JsonResponse
+    {
+        $borrowings = Borrowing::query()
+            ->with(['item', 'processedBy'])
+            ->latest('id')
+            ->paginate(15);
+
+        return response()->json($borrowings);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([

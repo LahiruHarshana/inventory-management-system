@@ -16,6 +16,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('cupboards', CupboardController::class);
     Route::apiResource('places', PlaceController::class);
     Route::apiResource('items', ItemController::class);
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/borrowings', [BorrowingController::class, 'index']);
     Route::post('/borrowings', [BorrowingController::class, 'store']);
     Route::post('/borrowings/{id}/return', [BorrowingController::class, 'returnItem']);
 });

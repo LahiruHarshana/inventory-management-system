@@ -25,14 +25,28 @@ trait Auditable
     {
         $original = method_exists($model, 'getOriginal') ? $model->getOriginal() : [];
         $changes = method_exists($model, 'getChanges') ? $model->getChanges() : [];
+        $attributes = method_exists($model, 'getAttributes') ? $model->getAttributes() : [];
+
+        $oldValues = match ($action) {
+            'created' => null,
+            'updated', 'deleted' => (array) $original,
+            default => null,
+        };
+
+        $newValues = match ($action) {
+            'created' => (array) $attributes,
+            'updated' => (array) $changes,
+            'deleted' => null,
+            default => null,
+        };
 
         AuditLog::query()->create([
             'user_id' => auth()->id(),
             'action' => $action,
             'auditable_type' => get_class($model),
             'auditable_id' => $model->id,
-            'old_values' => $action === 'created' ? null : (array) $original,
-            'new_values' => $action === 'deleted' ? null : (array) $changes,
+            'old_values' => $oldValues,
+            'new_values' => $newValues,
         ]);
     }
 }
