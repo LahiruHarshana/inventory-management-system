@@ -1,6 +1,6 @@
 "use client";
 
-import { AxiosError } from "axios";
+import axios from "axios";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
@@ -16,7 +16,7 @@ type LaravelErrorResponse = {
 };
 
 const getErrorMessage = (error: unknown) => {
-  if (error instanceof AxiosError<LaravelErrorResponse>) {
+  if (axios.isAxiosError<LaravelErrorResponse>(error)) {
     const responseData = error.response?.data;
     const validationMessage = responseData?.errors
       ? Object.values(responseData.errors).flat().join(" ")
