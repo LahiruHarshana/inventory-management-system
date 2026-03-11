@@ -221,11 +221,7 @@ export default function EditItemPage() {
 
       const formData = buildFormData();
 
-      await api.post<ItemMutationResponse>(`/items/${itemId}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await api.post<ItemMutationResponse>(`/items/${itemId}`, formData);
 
       toast.success("Item updated successfully");
       router.push("/dashboard/items");

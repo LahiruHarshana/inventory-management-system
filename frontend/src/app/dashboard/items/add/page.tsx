@@ -155,11 +155,7 @@ export default function AddItemPage() {
 
       const formData = buildFormData();
 
-      await api.post<ItemMutationResponse>("/items", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await api.post<ItemMutationResponse>("/items", formData);
 
       toast.success("Item added successfully");
       router.push("/dashboard/items");
